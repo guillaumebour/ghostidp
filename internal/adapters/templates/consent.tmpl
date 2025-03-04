@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Consent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .scope-item {
+            margin-bottom: 10px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 45%;
+        }
+        .btn-allow {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-deny {
+            background-color: #f44336;
+            color: white;
+        }
+        .user-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Consent Request</h1>
+
+    <div class="user-info">
+        <p>Logged in as: <strong>{{.User}}</strong></p>
+    </div>
+
+    <p><strong>{{.ClientName}}</strong> is requesting access to your data:</p>
+
+    <form method="POST" action="/consent?consent_challenge={{.Challenge}}">
+        <h2>Requested Permissions:</h2>
+
+        {{range .Scopes}}
+        <div class="scope-item">
+            <label>
+                <input type="checkbox" name="scope_{{.}}" checked> {{.}}
+            </label>
+        </div>
+        {{end}}
+
+        <div class="buttons">
+            <button type="submit" name="consent" value="allow" class="btn btn-allow">Allow</button>
+            <button type="submit" name="consent" value="deny" class="btn btn-deny">Deny</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

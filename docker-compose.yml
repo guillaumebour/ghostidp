@@ -1,0 +1,48 @@
+services:
+  sqlite:
+    image: busybox
+    volumes:
+      - hydra-sqlite:/mnt/sqlite
+    command: "chmod -R 777 /mnt/sqlite"
+  hydra:
+    container_name: ghost_idp_hydra
+    image: oryd/hydra:v2.3.0
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+      - "5555:5555" # Port for hydra token user
+    command: serve -c /etc/config/hydra/hydra.yml all --dev
+    volumes:
+      - hydra-sqlite:/mnt/sqlite:rw
+      - type: bind
+        source: ./config/hydra/
+        target: /etc/config/hydra
+    pull_policy: missing
+    environment:
+      - DSN=sqlite:///mnt/sqlite/db.sqlite?_fk=true&mode=rwc
+    restart: unless-stopped
+    depends_on:
+      - hydra-migrate
+      - sqlite
+    networks:
+      - intranet
+  hydra-migrate:
+    image: oryd/hydra:v2.3.0
+    environment:
+      - DSN=sqlite:///mnt/sqlite/db.sqlite?_fk=true&mode=rwc
+    command: migrate -c /etc/config/hydra/hydra.yml sql up -e --yes
+    pull_policy: missing
+    volumes:
+      - hydra-sqlite:/mnt/sqlite:rw
+      - type: bind
+        source: ./config/hydra/
+        target: /etc/config/hydra
+    restart: on-failure
+    networks:
+      - intranet
+    depends_on:
+      - sqlite
+networks:
+  intranet:
+volumes:
+  hydra-sqlite:

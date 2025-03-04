@@ -1,0 +1,24 @@
+# This is an example config
+users:
+  - username: alice
+    password: password
+    email: alice@example.com
+    given_name: Alice
+    family_name: Smith
+    custom_claims:
+      roles:
+        - admin
+        - user
+      department: engineering
+      employee_id: "12345"
+
+  - username: bob
+    password: password
+    email: bob@example.com
+    given_name: Bob
+    family_name: Johnson
+    custom_claims:
+      roles:
+        - user
+      department: marketing
+      employee_id: "67890"

@@ -1,0 +1,46 @@
+version: '3'
+vars:
+  DEV_APP_CREDENTIALS_FILE: "dev_app_credentials.json"
+  DEV_APP_NAME: "Test Auth Code App"
+  SKIP_CONSENT: "--skip-consent"
+  SKIP: "--skip"
+tasks:
+  start-hydra:
+    cmds:
+      - docker compose -f docker-compose.yml up -d
+  stop-hydra:
+    cmds:
+      - docker compose -f docker-compose.yml down
+  clean-hydra:
+    cmds:
+      - docker compose -f docker-compose.yml down -v
+      - rm -rf {{ .DEV_APP_CREDENTIALS_FILE }}
+  start-ghost:
+    cmds:
+      - go run cmd/idp/main.go
+  authorization-code-flow:
+    cmds:
+      # Generating the dev app credentials (client_id, client_secret) if they don't exist
+      - |
+        [ ! -e {{ .DEV_APP_CREDENTIALS_FILE }} ] && docker exec ghost_idp_hydra \
+          hydra create client \
+          --name "{{ .DEV_APP_NAME }}" \
+          {{ .SKIP_CONSENT }} \
+          --endpoint http://127.0.0.1:4445 \
+          --grant-type authorization_code,refresh_token \
+          --response-type code,id_token \
+          --format json \
+          --scope openid --scope offline \
+          --redirect-uri http://127.0.0.1:5555/callback > {{ .DEV_APP_CREDENTIALS_FILE }} || echo "Credentials file found, skipping client generation."
+      # Ask hydra to serve a demo app
+      - |
+        code_client_id=$( cat {{ .DEV_APP_CREDENTIALS_FILE }} | jq -r '.client_id' )
+        code_client_secret=$( cat {{ .DEV_APP_CREDENTIALS_FILE }} | jq -r '.client_secret' )
+        docker exec ghost_idp_hydra \
+          hydra perform authorization-code \
+          --client-id $code_client_id \
+          --client-secret $code_client_secret \
+          --endpoint http://127.0.0.1:4444/ \
+          {{ .SKIP }} \
+          --port 5555 \
+          --scope openid --scope offline
