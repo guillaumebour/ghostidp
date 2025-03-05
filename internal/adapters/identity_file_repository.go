@@ -17,6 +17,7 @@ type fileIdentity struct {
 	Email        string                 `yaml:"email"`
 	GivenName    string                 `yaml:"given_name"`
 	FamilyName   string                 `yaml:"family_name"`
+	Description  string                 `yaml:"description"`
 	CustomClaims map[string]interface{} `yaml:"custom_claims"`
 }
 
@@ -164,6 +165,7 @@ func fileIdentityToDomain(i *fileIdentity) *domain.Identity {
 		Email:        i.Email,
 		GivenName:    i.GivenName,
 		FamilyName:   i.FamilyName,
+		Description:  i.Description,
 		CustomClaims: i.CustomClaims,
 	}
 }

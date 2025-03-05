@@ -1,6 +1,8 @@
 # This is an example config
 users:
   - username: alice
+    description: |
+      A demo user called Alice
     password: password
     email: alice@example.com
     given_name: Alice
@@ -13,6 +15,8 @@ users:
       employee_id: "12345"
 
   - username: bob
+    description: |
+      A demo user called Bob
     password: password
     email: bob@example.com
     given_name: Bob

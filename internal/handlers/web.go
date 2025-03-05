@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"embed"
 	chilogrus "github.com/chi-middleware/logrus-logger"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -21,6 +22,9 @@ type server struct {
 	im  domain.IdentityManager
 }
 
+//go:embed assets
+var assets embed.FS
+
 // CreateWebServer creates the Chi Router of the web application
 func CreateWebServer(app *application.Application) (*chi.Mux, error) {
 	s := &server{
@@ -39,6 +43,9 @@ func CreateWebServer(app *application.Application) (*chi.Mux, error) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+
+	// Static assets
+	r.Handle("/assets/*", http.FileServer(http.FS(assets)))
 
 	// Application
 	r.Get(loginRoute, s.handleGetLogin())

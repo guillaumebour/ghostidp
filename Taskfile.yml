@@ -2,8 +2,8 @@ version: '3'
 vars:
   DEV_APP_CREDENTIALS_FILE: "dev_app_credentials.json"
   DEV_APP_NAME: "Test Auth Code App"
-  SKIP_CONSENT: "--skip-consent"
-  SKIP: "--skip"
+#  SKIP_CONSENT: "--skip-consent"
+#  SKIP: "--skip"
 tasks:
   start-hydra:
     cmds:

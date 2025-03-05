@@ -1,69 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>GhostIdP - Login</title>
+    <meta name="description" content="GhostIdP Login Page" />
+
+    <!-- Pico.css -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
+    />
     <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
         body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
-        .container {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        #ghost-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
         }
-        h1 {
-            text-align: center;
-            color: #333;
+        #ghost-logo {
+            flex-shrink: initial;
+            margin-right: 8px;
         }
-        .form-group {
-            margin-bottom: 15px;
+        #ghost-space {
+            flex-grow: 1;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+        #ghost-nav {}
+        #ghost-title > h1 {
+            display:table-cell;
+            vertical-align:middle
         }
-        input[type="text"],
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
+        #ghost-users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border-radius: 8px;
         }
-        button:hover {
-            background-color: #45a049;
+        .ghost-users-list-item {
+            display: flex;
+            flex-direction: row;
+            box-shadow: 4px 4px light-dark(rgba(50, 50, 50, 0.5), rgba(200, 200, 200, 0.5));
+            border: 1px solid light-dark(rgba(50, 50, 50, 0.5), rgba(200, 200, 200, 0.5));
+            border-radius: 8px;
+            padding: 16px;
         }
-        .error {
-            color: red;
-            margin-bottom: 15px;
+        .ghost-users-list-item-left {
+            flex-grow: 1;
+        }
+        .ghost-users-list-item-right {
+            align-self: center;
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>Login</h1>
-    {{if .Error}}
-    <div class="error">
-        {{.Error}}
-    </div>
-    {{end}}
-    {{ range .Users }}
-    <form method="POST" action="/login?login_challenge={{ $.Challenge}}">
-        <div class="form-group">
-            <label for="username">{{ .Username }}</label>
-            <input hidden type="text" id="username" name="username" value="{{ .Username }}" required>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div id="ghost-header">
+            <div id="ghost-logo">
+                <img alt="GhostIdP Logo" src="/assets/img/ghostidp_logo.png" width="50px"/>
+            </div>
+            <div id="ghost-title">
+                <h1>GhostIdP</h1>
+            </div>
+            <div id="ghost-space"></div>
+            <div id="ghost-nav">
+                <nav>
+                    <ul class="icons">
+                        <li>
+                            <a class="contrast" aria-label="Turn off dark mode" data-discover="true" href="#" data-theme-switcher="auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="currentColor" class="icon-theme-toggle moon">
+                                    <clipPath id="theme-toggle-cutout">
+                                        <path d="M0-11h25a1 1 0 0017 13v30H0Z"></path>
+                                    </clipPath>
+                                    <g clip-path="url(#theme-toggle-cutout)">
+                                        <circle cx="16" cy="16" r="8.4"></circle>
+                                        <path d="M18.3 3.2c0 1.3-1 2.3-2.3 2.3s-2.3-1-2.3-2.3S14.7.9 16 .9s2.3 1 2.3 2.3zm-4.6 25.6c0-1.3 1-2.3 2.3-2.3s2.3 1 2.3 2.3-1 2.3-2.3 2.3-2.3-1-2.3-2.3zm15.1-10.5c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zM3.2 13.7c1.3 0 2.3 1 2.3 2.3s-1 2.3-2.3 2.3S.9 17.3.9 16s1-2.3 2.3-2.3zm5.8-7C9 7.9 7.9 9 6.7 9S4.4 8 4.4 6.7s1-2.3 2.3-2.3S9 5.4 9 6.7zm16.3 21c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zm2.4-21c0 1.3-1 2.3-2.3 2.3S23 7.9 23 6.7s1-2.3 2.3-2.3 2.4 1 2.4 2.3zM6.7 23C8 23 9 24 9 25.3s-1 2.3-2.3 2.3-2.3-1-2.3-2.3 1-2.3 2.3-2.3z"></path>
+                                    </g>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <button type="submit">Login</button>
-    </form>
-    {{ end }}
-</div>
+    </div>
+</header>
+<!-- ./ Header -->
+
+<!-- Main - User Selection -->
+<main class="container">
+    <section id="ghost-user-selection">
+        <h2>Login</h2>
+        <p>
+           Please select a user from the list below.
+        </p>
+        <div class="container" id="ghost-users-list">
+            {{ range .Users }}
+            <form class="ghost-users-list-item" method="POST" action="/login?login_challenge={{ $.Challenge}}">
+                <div class="ghost-users-list-item-left">
+                    <h5>{{ .Username }} ({{ .GivenName }} {{ .FamilyName }})</h5>
+                    <p>{{ .Description }}</p>
+                    <input hidden type="text" id="username" name="username" value="{{ .Username }}" required>
+                </div>
+                <div class="ghost-users-list-item-right">
+                    <button type="submit" class="secondary">Go</button>
+                </div>
+            </form>
+            {{ end }}
+        </div>
+    </section>
+</main>
+<!-- ./ Main -->
+
+<section style="flex-grow: 1"></section>
+
+<!-- Footer -->
+<footer class="container">
+    <small>
+        <a href="https://github.com/guillaumebour/ghostidp">GhostIdP</a> •
+        <a href="https://github.com/guillaumebour/ghostidpl">Source code</a>
+    </small>
+</footer>
+<!-- ./ Footer -->
+
+<!-- Minimal theme switcher -->
+<script src="/assets/js/theme-switcher.js"></script>
+
 </body>
 </html>

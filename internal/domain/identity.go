@@ -8,6 +8,7 @@ type Identity struct {
 	Email        string
 	GivenName    string
 	FamilyName   string
+	Description  string
 	CustomClaims map[string]any
 }
 

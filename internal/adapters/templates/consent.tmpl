@@ -1,81 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Consent</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>GhostIdP - Consent</title>
+    <meta name="description" content="GhostIdP Consent Page" />
+
+    <!-- Pico.css -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
+    />
     <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
         body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .container {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .scope-item {
-            margin-bottom: 10px;
-        }
-        .buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            flex-direction: column;
         }
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 45%;
+        #ghost-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
         }
-        .btn-allow {
-            background-color: #4CAF50;
-            color: white;
+        #ghost-logo {
+            flex-shrink: initial;
+            margin-right: 8px;
         }
-        .btn-deny {
-            background-color: #f44336;
-            color: white;
+        #ghost-space {
+            flex-grow: 1;
         }
-        .user-info {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
+        #ghost-nav {}
+        #ghost-title > h1 {
+            display:table-cell;
+            vertical-align:middle
+        }
+        #ghost-requested-scopes {
+            margin-top: 24px;
+            margin-bottom: 24px;
+        }
+        #ghost-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>Consent Request</h1>
-
-    <div class="user-info">
-        <p>Logged in as: <strong>{{.User}}</strong></p>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div id="ghost-header">
+            <div id="ghost-logo">
+                <img alt="GhostIdP Logo" src="/assets/img/ghostidp_logo.png" width="50px"/>
+            </div>
+            <div id="ghost-title">
+                <h1>GhostIdP</h1>
+            </div>
+            <div id="ghost-space"></div>
+            <div id="ghost-nav">
+                <nav>
+                    <ul class="icons">
+                        <li>
+                            <a class="contrast" aria-label="Turn off dark mode" data-discover="true" href="#" data-theme-switcher="auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="currentColor" class="icon-theme-toggle moon">
+                                    <clipPath id="theme-toggle-cutout">
+                                        <path d="M0-11h25a1 1 0 0017 13v30H0Z"></path>
+                                    </clipPath>
+                                    <g clip-path="url(#theme-toggle-cutout)">
+                                        <circle cx="16" cy="16" r="8.4"></circle>
+                                        <path d="M18.3 3.2c0 1.3-1 2.3-2.3 2.3s-2.3-1-2.3-2.3S14.7.9 16 .9s2.3 1 2.3 2.3zm-4.6 25.6c0-1.3 1-2.3 2.3-2.3s2.3 1 2.3 2.3-1 2.3-2.3 2.3-2.3-1-2.3-2.3zm15.1-10.5c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zM3.2 13.7c1.3 0 2.3 1 2.3 2.3s-1 2.3-2.3 2.3S.9 17.3.9 16s1-2.3 2.3-2.3zm5.8-7C9 7.9 7.9 9 6.7 9S4.4 8 4.4 6.7s1-2.3 2.3-2.3S9 5.4 9 6.7zm16.3 21c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zm2.4-21c0 1.3-1 2.3-2.3 2.3S23 7.9 23 6.7s1-2.3 2.3-2.3 2.4 1 2.4 2.3zM6.7 23C8 23 9 24 9 25.3s-1 2.3-2.3 2.3-2.3-1-2.3-2.3 1-2.3 2.3-2.3z"></path>
+                                    </g>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
+</header>
+<!-- ./ Header -->
 
-    <p><strong>{{.ClientName}}</strong> is requesting access to your data:</p>
+<!-- Main - User Selection -->
+<main class="container">
+    <section id="ghost-user-selection">
+        <h2>Consent Request</h2>
+        <p>
+           Currently logged in as <strong>{{.User}}</strong>.
+        </p>
+        <p>
+            <strong>{{.ClientName}}</strong> is requesting access to your data.
+        </p>
+        <div style="margin-bottom: 48px"></div>
+        <form method="POST" action="/consent?consent_challenge={{.Challenge}}">
+            <h3>Requested Permissions:</h3>
+            <div id="ghost-requested-scopes">
+                {{range .Scopes}}
+                <div class="scope-item">
+                    <label>
+                        <input type="checkbox" name="scope_{{.}}" checked> {{.}}
+                    </label>
+                </div>
+                {{end}}
+            </div>
+            <div style="margin-bottom: 48px"></div>
+            <div class="buttons" id="ghost-buttons">
+                <button type="submit" name="consent" value="allow" class="btn btn-allow secondary">Allow</button>
+                <button type="submit" name="consent" value="deny" class="btn btn-deny secondary">Deny</button>
+            </div>
+        </form>
+    </section>
+</main>
+<!-- ./ Main -->
 
-    <form method="POST" action="/consent?consent_challenge={{.Challenge}}">
-        <h2>Requested Permissions:</h2>
+<section style="flex-grow: 1"></section>
 
-        {{range .Scopes}}
-        <div class="scope-item">
-            <label>
-                <input type="checkbox" name="scope_{{.}}" checked> {{.}}
-            </label>
-        </div>
-        {{end}}
+<!-- Footer -->
+<footer class="container">
+    <small>
+        <a href="https://github.com/guillaumebour/ghostidp">GhostIdP</a> •
+        <a href="https://github.com/guillaumebour/ghostidpl">Source code</a>
+    </small>
+</footer>
+<!-- ./ Footer -->
 
-        <div class="buttons">
-            <button type="submit" name="consent" value="allow" class="btn btn-allow">Allow</button>
-            <button type="submit" name="consent" value="deny" class="btn btn-deny">Deny</button>
-        </div>
-    </form>
-</div>
+<!-- Minimal theme switcher -->
+<script src="/assets/js/theme-switcher.js"></script>
+
 </body>
 </html>
