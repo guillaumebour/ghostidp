@@ -1,0 +1,26 @@
+ghostidp:
+  debug: true
+  usersConfig: |
+    users:
+      - username: alice
+        description: A demo user.
+        email: alice@example.com
+        given_name: Alice
+        family_name: Smith
+        custom_claims:
+          department: engineering
+          employed_id: 12345
+          roles:
+            - admin
+            - user
+      - username: bob
+        description: A demo user.
+        email: bob@example.com
+        given_name: Bob
+        family_name: Marvel
+        custom_claims:
+          department: engineering
+          employed_id: 6587
+          roles:
+            - admin
+            - user

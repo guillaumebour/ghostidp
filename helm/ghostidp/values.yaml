@@ -15,8 +15,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 ghostidp:
-  debug: true
-  hydraAdminURL: http://ghostidp_hydra:4445/admin
+  #debug: true
+  hydraAdminURL: http://ghostidp-hydra-admin:4445/admin
   usersConfig: |
     users:
       - username: alice
@@ -127,12 +127,14 @@ affinity: {}
 #######################
 # DEPENDENCIES VALUES #
 #######################
-#hydra:
-#  hydra:
-#    config:
-#      dsn: "memory"
-#      urls:
-#        self:
-#          issuer: ""
-#        login: ""
-#        consent: ""
+hydra:
+  hydra:
+    dev: true # required for http scheme
+    config:
+      dsn: "memory"
+      urls:
+        self:
+          issuer: "http://127.0.0.1:4444"
+        login: "http://127.0.0.1:8080/login"
+        consent: "http://127.0.0.1:8080/consent"
+        logout: "http://127.0.0.1:8080/logout"
