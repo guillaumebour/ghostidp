@@ -17,13 +17,13 @@ import (
 func main() {
 	mainCtx, cancelMainCtx := context.WithCancel(context.Background())
 
-	fs := flag.NewFlagSet("ghost", flag.ContinueOnError)
+	fs := flag.NewFlagSet("ghostidp", flag.ContinueOnError)
 	port := fs.Int("port", 8080, "port to listen on")
-	hydraAdminURL := fs.String("hydra-admin-url", "http://localhost:4445", "Hydra Admin API URL")
+	hydraAdminURL := fs.String("hydra-admin-url", "http://localhost:4445/admin", "Hydra Admin API URL")
 	usersFile := fs.String("users-file", "users.yaml", "hard-coded users file")
 	debug := fs.Bool("debug", false, "log debug information")
 
-	if err := ff.Parse(fs, os.Args[1:]); err != nil {
+	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVars()); err != nil {
 		log.Fatal(fmt.Errorf("failed to parse arguments: %v", err))
 	}
 
@@ -33,6 +33,11 @@ func main() {
 		opts = append(opts, logger.WithLogLevel(logrus.DebugLevel))
 	}
 	appLogger := logger.New(opts...)
+
+	// Display configuration
+	appLogger.Debugf("port: %d", *port)
+	appLogger.Debugf("hydra admin URL: %s", *hydraAdminURL)
+	appLogger.Debugf("users file: %s", *usersFile)
 
 	app, cancelAppCtx, err := application.NewApplication(mainCtx, &application.Params{
 		Log:           appLogger,

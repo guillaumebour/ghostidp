@@ -5,24 +5,21 @@ vars:
 #  SKIP_CONSENT: "--skip-consent"
 #  SKIP: "--skip"
 tasks:
-  start-hydra:
+  start-idp:
     cmds:
       - docker compose -f docker-compose.yml up -d
-  stop-hydra:
+  stop-idp:
     cmds:
       - docker compose -f docker-compose.yml down
-  clean-hydra:
+  clean-idp:
     cmds:
       - docker compose -f docker-compose.yml down -v
       - rm -rf {{ .DEV_APP_CREDENTIALS_FILE }}
-  start-ghost:
-    cmds:
-      - go run cmd/idp/main.go
   authorization-code-flow:
     cmds:
       # Generating the dev app credentials (client_id, client_secret) if they don't exist
       - |
-        [ ! -e {{ .DEV_APP_CREDENTIALS_FILE }} ] && docker exec ghost_idp_hydra \
+        [ ! -e {{ .DEV_APP_CREDENTIALS_FILE }} ] && docker exec ghostidp_hydra \
           hydra create client \
           --name "{{ .DEV_APP_NAME }}" \
           {{ .SKIP_CONSENT }} \
@@ -36,7 +33,7 @@ tasks:
       - |
         code_client_id=$( cat {{ .DEV_APP_CREDENTIALS_FILE }} | jq -r '.client_id' )
         code_client_secret=$( cat {{ .DEV_APP_CREDENTIALS_FILE }} | jq -r '.client_secret' )
-        docker exec ghost_idp_hydra \
+        docker exec ghostidp_hydra \
           hydra perform authorization-code \
           --client-id $code_client_id \
           --client-secret $code_client_secret \
@@ -44,3 +41,6 @@ tasks:
           {{ .SKIP }} \
           --port 5555 \
           --scope openid --scope offline
+  docker-build-latest:
+    cmds:
+      - docker build -t ghostidp:latest .
