@@ -60,6 +60,14 @@ service:
   type: ClusterIP
   port: 8080
 
+# HTTP Route
+httpRoute:
+  enabled: false
+  gatewayName: nginx-gw
+  gatewayNamespace: default
+  hostnames:
+    - example.org
+
 ingress:
   enabled: false
   className: ""
@@ -127,14 +135,14 @@ affinity: {}
 #######################
 # DEPENDENCIES VALUES #
 #######################
-hydra:
-  hydra:
-    dev: true # required for http scheme
-    config:
-      dsn: "memory"
-      urls:
-        self:
-          issuer: "http://127.0.0.1:4444"
-        login: "http://127.0.0.1:8080/login"
-        consent: "http://127.0.0.1:8080/consent"
-        logout: "http://127.0.0.1:8080/logout"
+#hydra:
+#  hydra:
+#    # dev: true
+#    config:
+#      dsn: "memory"
+#      urls:
+#        self:
+#          issuer: "http://127.0.0.1:4444"
+#        login: "http://127.0.0.1:8080/login"
+#        consent: "http://127.0.0.1:8080/consent"
+#        logout: "http://127.0.0.1:8080/logout"

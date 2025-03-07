@@ -1,0 +1,53 @@
+ghostidp:
+  debug: true
+  usersConfig: |
+    users:
+      - username: alice
+        description: A demo user.
+        email: alice@example.com
+        given_name: Alice
+        family_name: Smith
+        custom_claims:
+          department: engineering
+          employed_id: 12345
+          roles:
+            - admin
+            - user
+      - username: bob
+        description: A demo user.
+        email: bob@example.com
+        given_name: Bob
+        family_name: Marvel
+        custom_claims:
+          department: engineering
+          employed_id: 6587
+          roles:
+            - admin
+            - user
+
+# HTTP Route
+httpRoute:
+  enabled: true
+  gatewayName: gateway
+  gatewayNamespace: default
+  hostnames:
+    - idp.dev.local
+
+#######################
+# DEPENDENCIES VALUES #
+#######################
+hydra:
+  fullnameOverride: ""
+  serve:
+    cookies:
+      same_site_mode: Lax
+  hydra:
+    config:
+      dsn: "memory"
+      urls:
+        self:
+          public: "https://idp.dev.local"
+          issuer: "https://idp.dev.local"         # Will target ghostidp-hydra-public:4444
+        login: "https://idp.dev.local/login"      # Will target ghostidp:8080
+        consent: "https://idp.dev.local/consent"  # Will target ghostidp:8080
+        logout: "https://idp.dev.local/logout"    # Will target ghostidp:8080
