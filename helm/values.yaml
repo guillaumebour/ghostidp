@@ -1,3 +1,7 @@
+image:
+  repository: localhost:5005/ghostidp
+  tag: "latest"
+
 ghostidp:
   debug: true
   usersConfig: |
@@ -22,8 +26,31 @@ ghostidp:
           department: engineering
           employed_id: 6587
           roles:
-            - admin
             - user
+
+  defaultOAuth2Client:
+    enabled: true
+    name: default-oauth2-client
+    clientName: "Default Client"
+    skipConsent: false
+    grantTypes:
+      - client_credentials
+      - implicit
+      - authorization_code
+      - refresh_token
+    responseTypes:
+      - id_token
+      - code
+    scope: "offline openid"
+    credentials:
+      hydraGenerated: false
+      clientID: "0c8e230e-dc7a-4c62-aa49-6ff0c321d7c8"
+      clientSecret: "9bBtbWK_SjGGVa.IeETDhngNPi"
+    redirectUris:
+      - "http://127.0.0.1:5050/callback"
+    postLogoutRedirectUris:
+      - "http://127.0.0.1:5050/"
+    tokenEndpointAuthMethod: client_secret_basic
 
 # HTTP Route
 httpRoute:
@@ -51,3 +78,10 @@ hydra:
         login: "https://idp.dev.local/login"      # Will target ghostidp:8080
         consent: "https://idp.dev.local/consent"  # Will target ghostidp:8080
         logout: "https://idp.dev.local/logout"    # Will target ghostidp:8080
+  maester:
+    enabled: true
+  hydra-maester:
+    image:
+      # https://github.com/ory/hydra-maester/pull/159
+      repository: localhost:5005/controller
+      tag: latest

@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: localhost:5005/ghostidp
+  repository: ghostidp # TODO: adapt once published
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "latest" # TODO: adapt once published
 
 imagePullSecrets: []
 nameOverride: ""
@@ -30,6 +30,31 @@ ghostidp:
           roles:
             - admin
             - user
+  defaultOAuth2Client:
+    enabled: false
+#    name: test-oauth2-client
+#    clientName: "My test client"
+#    skipConsent: false
+#    grantTypes:
+#      - client_credentials
+#      - implicit
+#      - authorization_code
+#      - refresh_token
+#    responseTypes:
+#      - id_token
+#      - code
+#    scope: "offline openid"
+#    credentials:
+#      hydraGenerated: false
+#      clientID: "some ID"
+#      clientSecret: "some secret"
+#    redirectUris:
+#      - "http://127.0.0.1:5050/callback"
+#    postLogoutRedirectUris:
+#      - "http://127.0.0.1:5050/"
+#    audience:
+#      - aud-a
+#    tokenEndpointAuthMethod: client_secret_basic
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -130,19 +155,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-
-#######################
-# DEPENDENCIES VALUES #
-#######################
-#hydra:
-#  hydra:
-#    # dev: true
-#    config:
-#      dsn: "memory"
-#      urls:
-#        self:
-#          issuer: "http://127.0.0.1:4444"
-#        login: "http://127.0.0.1:8080/login"
-#        consent: "http://127.0.0.1:8080/consent"
-#        logout: "http://127.0.0.1:8080/logout"

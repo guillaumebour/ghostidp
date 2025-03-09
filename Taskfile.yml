@@ -5,6 +5,9 @@ vars:
 #  SKIP_CONSENT: "--skip-consent"
 #  SKIP: "--skip"
 tasks:
+  start-hydra:
+    cmds:
+      - docker compose -f docker-compose.yml up -d hydra
   start-idp:
     cmds:
       - docker compose -f docker-compose.yml up -d
@@ -44,3 +47,6 @@ tasks:
   docker-build-latest:
     cmds:
       - docker build -t ghostidp:latest .
+  bootstrap-dev-cluster:
+    cmds:
+      - cd infra && ./bootstrap.sh && cd -

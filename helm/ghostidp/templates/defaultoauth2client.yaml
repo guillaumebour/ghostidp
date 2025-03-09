@@ -1,0 +1,38 @@
+{{- with .Values.ghostidp.defaultOAuth2Client -}}
+{{- if .enabled -}}
+apiVersion: hydra.ory.sh/v1alpha1
+kind: OAuth2Client
+metadata:
+  name: {{ .name }}
+spec:
+  grantTypes:
+    {{- with .grantTypes }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  responseTypes:
+    {{- with .responseTypes }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  scope: {{ .scope }}
+  secretName: {{ .name }}-secret
+  # Below fields are optional
+  {{- with .clientName }}
+  clientName: {{ . }}
+  {{- end -}}
+  {{- with .redirectUris }}
+  redirectUris:
+    {{- toYaml . | nindent 4 }}
+  {{- end -}}
+  {{- with .postLogoutRedirectUris }}
+  postLogoutRedirectUris:
+    {{- toYaml . | nindent 4 }}
+  {{- end -}}
+  {{- with .audience }}
+  audience:
+    {{- toYaml . | nindent 4 }}
+  {{- end -}}
+  {{- with .tokenEndpointAuthMethod }}
+  tokenEndpointAuthMethod: {{ . }}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

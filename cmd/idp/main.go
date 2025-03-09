@@ -19,7 +19,7 @@ func main() {
 
 	fs := flag.NewFlagSet("ghostidp", flag.ContinueOnError)
 	port := fs.Int("port", 8080, "port to listen on")
-	hydraAdminURL := fs.String("hydra-admin-url", "http://localhost:4445/admin", "Hydra Admin API URL")
+	hydraAdminURL := fs.String("hydra-admin-url", "http://localhost:4445/admin", "hydra admin api url")
 	usersFile := fs.String("users-file", "users.yaml", "hard-coded users file")
 	debug := fs.Bool("debug", false, "log debug information")
 

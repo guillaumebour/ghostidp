@@ -6,7 +6,7 @@ COPY . .
 RUN go mod download
 RUN env GOOS=linux GOARCH=amd64 go build -o /go/bin/ghostidp cmd/idp/main.go
 
-
+# https://github.com/GoogleContainerTools/distroless
 FROM gcr.io/distroless/base-debian12
 
 COPY --from=builder /go/bin/ghostidp /
