@@ -57,12 +57,12 @@ func RenderConsentPage(ctx context.Context, consentChallenge string, h HydraClie
 
 	// Render the consent page
 	return func(w io.Writer) error {
-		return consentTmpl.Execute(w, map[string]any{
+		return consentTmpl.Execute(w, tp.BuildTemplateEnv(map[string]any{
 			"Challenge":  consentChallenge,
 			"ClientName": clientName,
 			"Scopes":     consentReq.RequestedScope,
 			"User":       consentReq.Subject,
-		})
+		}))
 	}, "", nil
 
 }

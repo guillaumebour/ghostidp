@@ -21,4 +21,5 @@ const (
 
 type TemplateProvider interface {
 	GetTemplate(template TemplateName) (*template.Template, error)
+	BuildTemplateEnv(values map[string]any) map[string]any
 }

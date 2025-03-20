@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,132 +7,113 @@
     <title>GhostIdP - Login</title>
     <meta name="description" content="GhostIdP Login Page" />
 
-    <!-- Pico.css -->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
-    />
+    <!-- daisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <style>
-        html, body {
-            margin: 0;
-            height: 100%;
-        }
         body {
+            min-height: 100vh;
+            margin: 0;
             display: flex;
             flex-direction: column;
         }
-        #ghost-header {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            align-content: center;
+        header {
+            min-height: 50px;
         }
-        #ghost-logo {
-            flex-shrink: initial;
-            margin-right: 8px;
+        footer {
+            min-height: 50px;
         }
-        #ghost-space {
-            flex-grow: 1;
+        main {
+            flex: 1;
         }
-        #ghost-nav {}
-        #ghost-title > h1 {
-            display:table-cell;
-            vertical-align:middle
+        {{ if .AccentColor }}
+        :root {
+            --color-accent: {{ .AccentColor }}
         }
-        #ghost-users-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            border-radius: 8px;
-        }
-        .ghost-users-list-item {
-            display: flex;
-            flex-direction: row;
-            box-shadow: 4px 4px light-dark(rgba(50, 50, 50, 0.5), rgba(200, 200, 200, 0.5));
-            border: 1px solid light-dark(rgba(50, 50, 50, 0.5), rgba(200, 200, 200, 0.5));
-            border-radius: 8px;
-            padding: 16px;
-        }
-        .ghost-users-list-item-left {
-            flex-grow: 1;
-        }
-        .ghost-users-list-item-right {
-            align-self: center;
-        }
+        {{ end }}
     </style>
 </head>
 
 <body>
+
 <!-- Header -->
 <header>
-    <div class="container">
-        <div id="ghost-header">
-            <div id="ghost-logo">
-                <img alt="GhostIdP Logo" src="/assets/img/ghostidp_logo.png" width="50px"/>
-            </div>
-            <div id="ghost-title">
-                <h1>GhostIdP</h1>
-            </div>
-            <div id="ghost-space"></div>
-            <div id="ghost-nav">
-                <nav>
-                    <ul class="icons">
-                        <li>
-                            <a class="contrast" aria-label="Turn off dark mode" data-discover="true" href="#" data-theme-switcher="auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="currentColor" class="icon-theme-toggle moon">
-                                    <clipPath id="theme-toggle-cutout">
-                                        <path d="M0-11h25a1 1 0 0017 13v30H0Z"></path>
-                                    </clipPath>
-                                    <g clip-path="url(#theme-toggle-cutout)">
-                                        <circle cx="16" cy="16" r="8.4"></circle>
-                                        <path d="M18.3 3.2c0 1.3-1 2.3-2.3 2.3s-2.3-1-2.3-2.3S14.7.9 16 .9s2.3 1 2.3 2.3zm-4.6 25.6c0-1.3 1-2.3 2.3-2.3s2.3 1 2.3 2.3-1 2.3-2.3 2.3-2.3-1-2.3-2.3zm15.1-10.5c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zM3.2 13.7c1.3 0 2.3 1 2.3 2.3s-1 2.3-2.3 2.3S.9 17.3.9 16s1-2.3 2.3-2.3zm5.8-7C9 7.9 7.9 9 6.7 9S4.4 8 4.4 6.7s1-2.3 2.3-2.3S9 5.4 9 6.7zm16.3 21c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zm2.4-21c0 1.3-1 2.3-2.3 2.3S23 7.9 23 6.7s1-2.3 2.3-2.3 2.4 1 2.4 2.3zM6.7 23C8 23 9 24 9 25.3s-1 2.3-2.3 2.3-2.3-1-2.3-2.3 1-2.3 2.3-2.3z"></path>
-                                    </g>
-                                </svg>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+    <div class="navbar bg-base-100 shadow-sm">
+        <div class="m-2">
+            <img alt="GhostIdP Logo" src="/assets/img/ghostidp_logo.png" width="50px"/>
+        </div>
+        <div class="flex-1">
+            <a class="btn btn-ghost text-xl">Ghost IdP</a>
+            {{ if .BadgeContent }}
+            <div class="badge badge-accent text-base-content">{{ .BadgeContent }}</div>
+            {{ end }}
+        </div>
+        <div class="flex-none m-2">
+            <ul class="icons">
+                <li>
+                    <a class="contrast" aria-label="Turn off dark mode" data-discover="true" href="#" data-theme-switcher="auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="currentColor" class="icon-theme-toggle moon">
+                            <clipPath id="theme-toggle-cutout">
+                                <path d="M0-11h25a1 1 0 0017 13v30H0Z"></path>
+                            </clipPath>
+                            <g clip-path="url(#theme-toggle-cutout)">
+                                <circle cx="16" cy="16" r="8.4"></circle>
+                                <path d="M18.3 3.2c0 1.3-1 2.3-2.3 2.3s-2.3-1-2.3-2.3S14.7.9 16 .9s2.3 1 2.3 2.3zm-4.6 25.6c0-1.3 1-2.3 2.3-2.3s2.3 1 2.3 2.3-1 2.3-2.3 2.3-2.3-1-2.3-2.3zm15.1-10.5c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zM3.2 13.7c1.3 0 2.3 1 2.3 2.3s-1 2.3-2.3 2.3S.9 17.3.9 16s1-2.3 2.3-2.3zm5.8-7C9 7.9 7.9 9 6.7 9S4.4 8 4.4 6.7s1-2.3 2.3-2.3S9 5.4 9 6.7zm16.3 21c-1.3 0-2.3-1-2.3-2.3s1-2.3 2.3-2.3 2.3 1 2.3 2.3-1 2.3-2.3 2.3zm2.4-21c0 1.3-1 2.3-2.3 2.3S23 7.9 23 6.7s1-2.3 2.3-2.3 2.4 1 2.4 2.3zM6.7 23C8 23 9 24 9 25.3s-1 2.3-2.3 2.3-2.3-1-2.3-2.3 1-2.3 2.3-2.3z"></path>
+                            </g>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </header>
-<!-- ./ Header -->
 
-<!-- Main - User Selection -->
-<main class="container">
-    <section id="ghost-user-selection">
-        <h2>Login</h2>
-        <p>
-           Please select a user from the list below.
-        </p>
-        <div class="container" id="ghost-users-list">
-            {{ range .Users }}
-            <form class="ghost-users-list-item" method="POST" action="/login?login_challenge={{ $.Challenge}}">
-                <div class="ghost-users-list-item-left">
-                    <h5>{{ .Username }} ({{ .GivenName }} {{ .FamilyName }})</h5>
-                    <p>{{ .Description }}</p>
-                    <input hidden type="text" id="username" name="username" value="{{ .Username }}" required>
-                </div>
-                <div class="ghost-users-list-item-right">
-                    <button type="submit" class="secondary">Go</button>
-                </div>
-            </form>
-            {{ end }}
+<!-- Main Content -->
+<main>
+    <div class="max-w-[600px] m-auto my-24 px-8 bg-base-100">
+        <!-- Card with all users -->
+        <div>
+            <ul class="list rounded-box shadow-md">
+                <li class="p-4 pb-0 text-3xl opacity-90 tracking-wide">Login</li>
+                <li class="p-4 pt-2 pb-2 text-xs opacity-60 tracking-wide">Please select a user to login</li>
+
+                {{ range .Users }}
+                <form class="list-row" method="POST" action="/login?login_challenge={{ $.Challenge}}">
+                    <div>
+                        <div class="avatar avatar-placeholder">
+                            <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                                <span class="text-xs">{{ printf "%.1s" .Username }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="username">{{ .Username }} ({{ .GivenName }} {{ .FamilyName }})</label>
+                        <input hidden type="text" id="username" name="username" value="{{ .Username }}" required>
+                        <div class="text-xs uppercase font-semibold opacity-60">{{ .Description }}</div>
+                    </div>
+                    <div class="tooltip" data-tip="Pinky promise">
+                        <button type="submit" class="btn btn-square btn-ghost">
+                            <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+                        </button>
+                    </div>
+                </form>
+                {{ end }}
+            </ul>
         </div>
-    </section>
-</main>
-<!-- ./ Main -->
+    </div>
 
-<section style="flex-grow: 1"></section>
+</main>
 
 <!-- Footer -->
-<footer class="container">
-    <small>
-        <a href="https://github.com/guillaumebour/ghostidp">GhostIdP</a> •
-        <a href="https://github.com/guillaumebour/ghostidpl">Source code</a>
-    </small>
+<footer class="footer sm:footer-horizontal items-center p-4 bg-base-100">
+    <aside class="grid-flow-col items-center">
+        {{ if .Version }}
+        <p>Version: {{ .Version }}</p>
+        {{ end }}
+    </aside>
 </footer>
-<!-- ./ Footer -->
 
 <!-- Minimal theme switcher -->
 <script src="/assets/js/theme-switcher.js"></script>

@@ -72,9 +72,9 @@ func RenderLoginPage(ctx context.Context, loginChallenge string, h HydraClient, 
 	}
 
 	return func(w io.Writer) error {
-		return loginTpl.Execute(w, map[string]any{
+		return loginTpl.Execute(w, tp.BuildTemplateEnv(map[string]any{
 			"Challenge": loginChallenge,
 			"Users":     identities,
-		})
+		}))
 	}, "", nil
 }
