@@ -40,7 +40,7 @@ services:
       - sqlite
   ghostidp:
     container_name: ghostidp
-    image: ghostidp:latest
+#    image: ghostidp:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -49,6 +49,10 @@ services:
     environment:
       DEBUG: true
       HYDRA_ADMIN_URL: http://ghostidp_hydra:4445/admin
+      USERS_FILE: users.yaml
+      BADGE: "DEV ENV"
+      ACCENT_COLOR: "#BF3131"
+      VERSION: "alpha.2"
     ports:
       - "8080:8080"
     depends_on:

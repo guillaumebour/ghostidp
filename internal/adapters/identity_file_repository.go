@@ -29,9 +29,10 @@ type identityFileRepository struct {
 	log *logrus.Entry
 
 	// Identities
-	iLock          sync.RWMutex
-	configFilepath string
-	identities     map[string]*fileIdentity
+	iLock           sync.RWMutex
+	configFilepath  string
+	identitiesAsMap map[string]*fileIdentity
+	identities      []*fileIdentity
 }
 
 type IdentityFileRepositoryParams struct {
@@ -45,9 +46,10 @@ func NewIdentityFileRepository(ctx context.Context, p *IdentityFileRepositoryPar
 			"category": "identities-file-repository",
 		}),
 
-		iLock:          sync.RWMutex{},
-		identities:     make(map[string]*fileIdentity),
-		configFilepath: p.ConfigFilepath,
+		iLock:           sync.RWMutex{},
+		identitiesAsMap: make(map[string]*fileIdentity),
+		identities:      make([]*fileIdentity, 0),
+		configFilepath:  p.ConfigFilepath,
 	}
 
 	// load users for the first time
@@ -78,12 +80,13 @@ func (i *identityFileRepository) loadIdentities() error {
 	}
 
 	// Reset and reload users
-	i.identities = make(map[string]*fileIdentity)
+	i.identities = config.Users
+	i.identitiesAsMap = make(map[string]*fileIdentity)
 	for _, user := range config.Users {
-		i.identities[user.Username] = user
+		i.identitiesAsMap[user.Username] = user
 	}
 
-	i.log.Infof("loaded %d identities", len(i.identities))
+	i.log.Infof("loaded %d identities", len(i.identitiesAsMap))
 
 	return nil
 }
@@ -140,7 +143,7 @@ func (i *identityFileRepository) FindIdentityByUsername(_ context.Context, usern
 	i.iLock.RLock()
 	defer i.iLock.RUnlock()
 
-	identity, exists := i.identities[username]
+	identity, exists := i.identitiesAsMap[username]
 	if !exists {
 		return nil, domain.ErrIdentityRepositoryIdentityNotFound
 	}
@@ -151,7 +154,7 @@ func (i *identityFileRepository) FindIdentityByUsername(_ context.Context, usern
 func (i *identityFileRepository) ListIdentities(_ context.Context) ([]*domain.Identity, error) {
 	i.iLock.RLock()
 	defer i.iLock.RUnlock()
-	dIdentities := make([]*domain.Identity, 0, len(i.identities))
+	dIdentities := make([]*domain.Identity, 0, len(i.identitiesAsMap))
 	for _, identity := range i.identities {
 		dIdentities = append(dIdentities, fileIdentityToDomain(identity))
 	}
