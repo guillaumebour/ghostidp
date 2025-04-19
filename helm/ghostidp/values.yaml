@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghostidp # TODO: adapt once published
+  repository: ghcr.io/guillaumebour/ghostidp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest" # TODO: adapt once published
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""

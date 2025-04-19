@@ -1,4 +1,5 @@
 FROM golang:1.24-alpine AS builder
+LABEL org.opencontainers.image.source=https://github.com/guillaumebour/ghostidp
 
 WORKDIR /go/src/app
 COPY . .

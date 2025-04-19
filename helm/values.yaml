@@ -1,7 +1,3 @@
-image:
-  repository: localhost:5005/ghostidp
-  tag: "latest"
-
 ghostidp:
   debug: true
   usersConfig: |
@@ -79,7 +75,7 @@ hydra:
         consent: "https://idp.dev.local/consent"  # Will target ghostidp:8080
         logout: "https://idp.dev.local/logout"    # Will target ghostidp:8080
   maester:
-    enabled: true
+    enabled: false # set to true if you want to automatically create a default client in Hydra
   hydra-maester:
     image:
       # https://github.com/ory/hydra-maester/pull/159

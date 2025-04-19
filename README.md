@@ -91,13 +91,8 @@ To run `ghostidp` in a local Kubernetes cluster:
 > To make things a bit more interesting, this script also setups a Gateway that takes care of the TLS Termination.
 
 3. Verify that the cluster is up and running with `kubectl get pods --all-namespaces`.
-4. Build the latest Docker image and push it to the local registry
-```
-docker build -t localhost:5005/ghostidp:latest -f Dockerfile . 
-docker push localhost:5005/ghostidp:latest  
-```
 
-5. If you want the default OAuth2 client to be created automatically (`hydra.maester.enabled` is `true`), you also need to build the `hydra-maester` controller image
+4. If you want the default OAuth2 client to be created automatically (`hydra.maester.enabled` is `true`), you also need to build the `hydra-maester` controller image (see https://github.com/ory/hydra-maester/pull/159).
 ```
 # From your project folder
 git clone git@github.com:guillaumebour/hydra-maester.git
@@ -106,7 +101,7 @@ docker build -t localhost:5005/controller:latest -f .docker/Dockerfile-build .
 docker push localhost:5005/controller:latest
 ```
 
-6. Install ghostidp to the cluster
+5. Install ghostidp to the cluster
 ```
 helm install -f ./helm/values.https.yaml ghostidp ./helm/ghostidp 
 ```
