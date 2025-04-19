@@ -44,8 +44,8 @@ ghostidp:
     scope: "offline openid"
     credentials:
       hydraGenerated: false
-      clientID: "0c8e230e-dc7a-4c62-aa49-6ff0c321d7c8"
-      clientSecret: "9bBtbWK_SjGGVa.IeETDhngNPi"
+      clientID: "my-default-client"
+      clientSecret: "very-insecure-secret"
     redirectUris:
       - "http://127.0.0.1:5050/callback"
     postLogoutRedirectUris:

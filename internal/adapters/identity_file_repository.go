@@ -106,7 +106,7 @@ func (i *identityFileRepository) watchIdentitiesFile(ctx context.Context) error 
 		return err
 	}
 
-	// Start a dedicate go routine to watch changes to the users file
+	// Start a dedicated go routine to watch changes to the users file
 	// This goroutine will stop when the parent context is cancelled
 	go func() {
 		for {
@@ -164,7 +164,6 @@ func (i *identityFileRepository) ListIdentities(_ context.Context) ([]*domain.Id
 func fileIdentityToDomain(i *fileIdentity) *domain.Identity {
 	return &domain.Identity{
 		Username:     i.Username,
-		Password:     i.Password,
 		Email:        i.Email,
 		GivenName:    i.GivenName,
 		FamilyName:   i.FamilyName,

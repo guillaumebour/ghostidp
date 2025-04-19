@@ -44,7 +44,7 @@ func NewHydraClient(p *HydraClientParams) domain.HydraClient {
 }
 
 func (h *hydraClient) GetLoginRequest(loginChallenge string) (*domain.LoginRequest, error) {
-	url := fmt.Sprintf("%s/oauth2/auth/requests/login?login_challenge=%s", h.adminURL, loginChallenge)
+	url := fmt.Sprintf(getLoginRequestEndpoint, h.adminURL, loginChallenge)
 	resp, err := h.client.Get(url)
 	if err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ type acceptLoginRequest struct {
 }
 
 func (h *hydraClient) AcceptLogin(loginChallenge string, subject string) (*domain.RedirectToResponse, error) {
-	url := fmt.Sprintf("%s/oauth2/auth/requests/login/accept?login_challenge=%s", h.adminURL, loginChallenge)
+	url := fmt.Sprintf(acceptLoginEndpoint, h.adminURL, loginChallenge)
 
 	loginAccept := acceptLoginRequest{
 		Subject:     subject,
@@ -116,7 +116,7 @@ func (h *hydraClient) AcceptLogin(loginChallenge string, subject string) (*domai
 }
 
 func (h *hydraClient) GetConsentRequest(consentChallenge string) (*domain.ConsentRequest, error) {
-	url := fmt.Sprintf("%s/oauth2/auth/requests/consent?consent_challenge=%s", h.adminURL, consentChallenge)
+	url := fmt.Sprintf(getConsentRequestEndpoint, h.adminURL, consentChallenge)
 	resp, err := h.client.Get(url)
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ type acceptConsentRequest struct {
 }
 
 func (h *hydraClient) AcceptConsent(consentChallenge string, scopes []string, claims map[string]any) (*domain.RedirectToResponse, error) {
-	url := fmt.Sprintf("%s/oauth2/auth/requests/consent/accept?consent_challenge=%s", h.adminURL, consentChallenge)
+	url := fmt.Sprintf(acceptConsentEndpoint, h.adminURL, consentChallenge)
 
 	consentAccept := acceptConsentRequest{
 		GrantScope:  scopes,
@@ -194,10 +194,10 @@ func (h *hydraClient) AcceptConsent(consentChallenge string, scopes []string, cl
 }
 
 func (h *hydraClient) RejectConsent(consentChallenge string, reason string) (*domain.RedirectToResponse, error) {
-	url := fmt.Sprintf("%s/oauth2/auth/requests/consent/reject?consent_challenge=%s", h.adminURL, consentChallenge)
+	url := fmt.Sprintf(rejectConsentEndpoint, h.adminURL, consentChallenge)
 
 	reject := map[string]string{
-		"error":             "user rejected consent",
+		"error":             "User rejected consent",
 		"error_description": reason,
 	}
 

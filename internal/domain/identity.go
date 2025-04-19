@@ -4,7 +4,6 @@ import "fmt"
 
 type Identity struct {
 	Username     string
-	Password     string
 	Email        string
 	GivenName    string
 	FamilyName   string
