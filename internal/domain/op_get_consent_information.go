@@ -4,19 +4,25 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 )
 
-func RenderConsentPage(ctx context.Context, consentChallenge string, h HydraClient, ir IdentityRepository, tp TemplateProvider) (RenderablePageFn, string, error) {
+type ConsentInformationResponse struct {
+	RedirectURL string
+	ClientName  string
+	Scopes      []string
+	User        string
+}
+
+func GetConsentInformation(ctx context.Context, consentChallenge string, h HydraClient, ir IdentityRepository) (*ConsentInformationResponse, error) {
 	// Validate that the consent challenge is not empty
 	if consentChallenge == "" {
-		return nil, "", NewValidationError("consent_challenge", "Required")
+		return nil, NewValidationError("consent_challenge", "Required")
 	}
 
 	// Fetch the consent request from Hydra
 	consentReq, err := h.GetConsentRequest(consentChallenge)
 	if err != nil {
-		return nil, "", fmt.Errorf("failed to get consent request: %w", err)
+		return nil, fmt.Errorf("failed to get consent request: %w", err)
 	}
 
 	trustedClientSkipConsent := false
@@ -32,37 +38,28 @@ func RenderConsentPage(ctx context.Context, consentChallenge string, h HydraClie
 		identity, err := ir.FindIdentityByUsername(ctx, consentReq.Subject)
 		if err != nil {
 			if errors.Is(err, ErrIdentityRepositoryIdentityNotFound) {
-				return nil, "", NewNotFoundError("user does not exist")
+				return nil, NewNotFoundError("user does not exist")
 			}
-			return nil, "", fmt.Errorf("failed to find identity: %w", err)
+			return nil, fmt.Errorf("failed to find identity: %w", err)
 		}
 
 		res, err := h.AcceptConsent(consentChallenge, consentReq.RequestedScope, identity.AllClaims())
 		if err != nil {
-			return nil, "", fmt.Errorf("failed to accept consent: %w", err)
+			return nil, fmt.Errorf("failed to accept consent: %w", err)
 		}
 
-		return nil, res.RedirectTo, nil
+		return &ConsentInformationResponse{
+			RedirectURL: res.RedirectTo,
+		}, nil
 	}
-
-	consentTmpl, err := tp.GetTemplate(ConsentPage)
-	if err != nil {
-		return nil, "", fmt.Errorf("failed to get template: %w", err)
-	}
-
 	clientName := "Unknown"
 	if consentReq.Client.ClientName != nil {
 		clientName = *consentReq.Client.ClientName
 	}
 
-	// Render the consent page
-	return func(w io.Writer) error {
-		return consentTmpl.Execute(w, tp.BuildTemplateEnv(map[string]any{
-			"Challenge":  consentChallenge,
-			"ClientName": clientName,
-			"Scopes":     consentReq.RequestedScope,
-			"User":       consentReq.Subject,
-		}))
-	}, "", nil
-
+	return &ConsentInformationResponse{
+		ClientName: clientName,
+		Scopes:     consentReq.RequestedScope,
+		User:       consentReq.Subject,
+	}, nil
 }

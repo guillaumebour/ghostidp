@@ -1,4 +1,4 @@
-package domain
+package handlers
 
 import "html/template"
 

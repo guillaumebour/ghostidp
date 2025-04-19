@@ -1,8 +1,7 @@
-package adapters
+package handlers
 
 import (
 	_ "embed"
-	"github.com/guillaumebour/ghostidp/internal/domain"
 	"html/template"
 )
 
@@ -13,7 +12,7 @@ var loginPageTemplate string
 var consentPageTemplate string
 
 type embeddedTemplateProvider struct {
-	templates    map[domain.TemplateName]*template.Template
+	templates    map[TemplateName]*template.Template
 	templatesEnv map[string]any
 }
 
@@ -23,10 +22,10 @@ type EmbeddedTemplateProviderParams struct {
 	AccentColor string
 }
 
-func NewEmbeddedTemplateProvider(p *EmbeddedTemplateProviderParams) domain.TemplateProvider {
-	templates := make(map[domain.TemplateName]*template.Template)
-	templates[domain.LoginPage] = template.Must(template.New(string(domain.LoginPage)).Parse(loginPageTemplate))
-	templates[domain.ConsentPage] = template.Must(template.New(string(domain.ConsentPage)).Parse(consentPageTemplate))
+func NewEmbeddedTemplateProvider(p *EmbeddedTemplateProviderParams) TemplateProvider {
+	templates := make(map[TemplateName]*template.Template)
+	templates[LoginPage] = template.Must(template.New(string(LoginPage)).Parse(loginPageTemplate))
+	templates[ConsentPage] = template.Must(template.New(string(ConsentPage)).Parse(consentPageTemplate))
 
 	return &embeddedTemplateProvider{
 		templates: templates,
@@ -38,10 +37,10 @@ func NewEmbeddedTemplateProvider(p *EmbeddedTemplateProviderParams) domain.Templ
 	}
 }
 
-func (e *embeddedTemplateProvider) GetTemplate(template domain.TemplateName) (*template.Template, error) {
+func (e *embeddedTemplateProvider) GetTemplate(template TemplateName) (*template.Template, error) {
 	t, ok := e.templates[template]
 	if !ok {
-		return nil, domain.TemplateProviderErrTemplateNotFound
+		return nil, TemplateProviderErrTemplateNotFound
 	}
 	return t, nil
 }

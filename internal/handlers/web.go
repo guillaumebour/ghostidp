@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"embed"
+	"fmt"
 	chilogrus "github.com/chi-middleware/logrus-logger"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -20,16 +21,18 @@ const (
 type server struct {
 	log *logrus.Entry
 	im  domain.IdentityManager
+	tp  TemplateProvider
 }
 
 //go:embed assets
 var assets embed.FS
 
 // CreateWebServer creates the Chi Router of the web application
-func CreateWebServer(app *application.Application) (*chi.Mux, error) {
+func CreateWebServer(app *application.Application, tp TemplateProvider) (*chi.Mux, error) {
 	s := &server{
 		log: app.Log.WithField("component", "webserver"),
 		im:  app.IdentityManager,
+		tp:  tp,
 	}
 
 	r := chi.NewRouter()
@@ -56,35 +59,60 @@ func CreateWebServer(app *application.Application) (*chi.Mux, error) {
 	return r, nil
 }
 
+func (a *server) renderPage(w http.ResponseWriter, page TemplateName, data map[string]any) {
+	loginTpl, err := a.tp.GetTemplate(page)
+	if err != nil {
+		a.log.WithError(err).Errorf("failed to get template")
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	if err = loginTpl.Execute(w, a.tp.BuildTemplateEnv(data)); err != nil {
+		a.log.WithError(err).Errorf("failed to execute template")
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (a *server) handleError(w http.ResponseWriter, err error) {
+	errCode := http.StatusInternalServerError
+	msg := "Something went wrong"
+
+	switch {
+	case domain.IsNotFoundError(err):
+		errCode = http.StatusNotFound
+		msg = "Not found"
+	case domain.IsValidationError(err):
+		errCode = http.StatusBadRequest
+		msg = "Validation error: " + err.Error()
+	}
+
+	http.Error(w, msg, errCode)
+}
+
 func (a *server) handleGetLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get login_challenge from query
 		loginChallenge := r.URL.Query().Get("login_challenge")
 
-		// Get login page from domain
-		renderingFn, redirect, err := a.im.RenderLoginPage(r.Context(), loginChallenge)
+		// Get login information from domain
+		loginInformation, err := a.im.GetLoginInformation(r.Context(), loginChallenge)
 		if err != nil {
-			a.log.WithError(err).Error("error rendering login page")
-			http.Error(w, "something went wrong 1", http.StatusInternalServerError) // ToDo: handle other errors
+			a.log.WithError(err).Error("failed to get login information")
+			a.handleError(w, err)
 			return
 		}
 
-		// We either have a renderingFn, or a redirect
-		if redirect != "" {
-			http.Redirect(w, r, redirect, http.StatusFound)
+		// If the RedirectURL is provided, we don't need to render the login page
+		if loginInformation.RedirectURL != "" {
+			http.Redirect(w, r, loginInformation.RedirectURL, http.StatusFound)
 			return
 		}
 
-		if renderingFn != nil {
-			if err := renderingFn(w); err != nil {
-				a.log.WithError(err).Error("error rendering login page")
-				http.Error(w, "something went wrong 2", http.StatusInternalServerError)
-			}
-			return
-		}
-
-		// We should not end up here
-		http.Error(w, "something went wrong 3", http.StatusInternalServerError)
+		a.renderPage(w, LoginPage, map[string]any{
+			"Challenge": loginChallenge,
+			"Users":     loginInformation.Identities,
+		})
 	}
 }
 
@@ -93,30 +121,26 @@ func (a *server) handleGetConsent() http.HandlerFunc {
 		// Get consent_challenge from query
 		consentChallenge := r.URL.Query().Get("consent_challenge")
 
-		// Get consent page from domain
-		renderingFn, redirect, err := a.im.RenderConsentPage(r.Context(), consentChallenge)
+		// Get consent information from domain
+		consentInformation, err := a.im.GetConsentInformation(r.Context(), consentChallenge)
 		if err != nil {
 			a.log.WithError(err).Error("error rendering consent page")
-			http.Error(w, "something went wrong 4", http.StatusInternalServerError) // ToDo: handle other errors
+			a.handleError(w, err)
 			return
 		}
 
-		// We either have a renderingFn, or a redirect
-		if redirect != "" {
-			http.Redirect(w, r, redirect, http.StatusFound)
+		// If the RedirectURL is provided, we don't need to render the consent page
+		if consentInformation.RedirectURL != "" {
+			http.Redirect(w, r, consentInformation.RedirectURL, http.StatusFound)
 			return
 		}
 
-		if renderingFn != nil {
-			if err := renderingFn(w); err != nil {
-				a.log.WithError(err).Error("error rendering consent page")
-				http.Error(w, "something went wrong 5", http.StatusInternalServerError)
-			}
-			return
-		}
-
-		// We should not end up here
-		http.Error(w, "something went wrong 6", http.StatusInternalServerError)
+		a.renderPage(w, ConsentPage, map[string]any{
+			"Challenge":  consentChallenge,
+			"ClientName": consentInformation.ClientName,
+			"Scopes":     consentInformation.Scopes,
+			"User":       consentInformation.User,
+		})
 	}
 }
 
@@ -127,35 +151,24 @@ func (a *server) handlePostLogin() http.HandlerFunc {
 
 		// Get username from body
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, "invalid form data", http.StatusBadRequest)
+			http.Error(w, "Invalid form data", http.StatusBadRequest)
 			return
 		}
 
-		username := r.Form.Get("username")
-
-		renderingFn, redirect, err := a.im.Login(r.Context(), loginChallenge, username)
+		redirect, err := a.im.Login(r.Context(), loginChallenge, r.Form.Get("username"))
 		if err != nil {
-			a.log.WithError(err).Error("error login in")
-			http.Error(w, "something went wrong 7", http.StatusInternalServerError) // ToDo: handle other errors
+			a.log.WithError(err).Error("error performing login")
+			a.handleError(w, err)
 			return
 		}
 
-		// Happy path
 		if redirect != "" {
 			http.Redirect(w, r, redirect, http.StatusFound)
 			return
 		}
 
-		if renderingFn != nil {
-			if err := renderingFn(w); err != nil {
-				a.log.WithError(err).Error("error rendering login page")
-				http.Error(w, "something went wrong 8", http.StatusInternalServerError)
-			}
-			return
-		}
-
-		// We should not end up here
-		http.Error(w, "something went wrong 9", http.StatusInternalServerError)
+		// safeguard
+		a.handleError(w, fmt.Errorf("missing redirect URL"))
 	}
 }
 
@@ -182,28 +195,19 @@ func (a *server) handlePostConsent() http.HandlerFunc {
 			}
 		}
 
-		renderingFn, redirect, err := a.im.Consent(r.Context(), consentChallenge, grantedAccess, grantedScopes)
+		redirect, err := a.im.Consent(r.Context(), consentChallenge, grantedAccess, grantedScopes)
 		if err != nil {
 			a.log.WithError(err).Error("error accepting consent")
-			http.Error(w, "something went wrong 10", http.StatusInternalServerError) // ToDo: handle other errors
+			a.handleError(w, err)
 			return
 		}
 
-		// Happy path
 		if redirect != "" {
 			http.Redirect(w, r, redirect, http.StatusFound)
 			return
 		}
 
-		if renderingFn != nil {
-			if err := renderingFn(w); err != nil {
-				a.log.WithError(err).Error("error rendering login page")
-				http.Error(w, "something went wrong 11", http.StatusInternalServerError)
-			}
-			return
-		}
-
-		// We should not end up here
-		http.Error(w, "something went wrong 12", http.StatusInternalServerError)
+		// safeguard
+		a.handleError(w, fmt.Errorf("missing redirect URL"))
 	}
 }

@@ -49,11 +49,6 @@ func main() {
 		Log:           appLogger,
 		HydraAdminURL: *hydraAdminURL,
 		UsersFile:     *usersFile,
-		Display: &application.DisplayParams{
-			Version:     *version,
-			Badge:       *badge,
-			AccentColor: *accentColor,
-		},
 	})
 	if err != nil {
 		appLogger.Fatal(fmt.Errorf("failed to create application: %w", err))
@@ -63,13 +58,17 @@ func main() {
 		cancelMainCtx()
 	}()
 
-	// Create the Wev Server
-	router, err := handlers.CreateWebServer(app)
+	tmplProvider := handlers.NewEmbeddedTemplateProvider(&handlers.EmbeddedTemplateProviderParams{
+		Badge:       *badge,
+		Version:     *version,
+		AccentColor: *accentColor,
+	})
+
+	router, err := handlers.CreateWebServer(app, tmplProvider)
 	if err != nil {
 		appLogger.Fatal(fmt.Errorf("failed to create Web Server: %v", err))
 	}
 
-	// Run the Web Server
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), router); err != nil {
 		log.Fatal(err)
 	}

@@ -104,8 +104,6 @@ func (h *hydraClient) AcceptLogin(loginChallenge string, subject string) (*domai
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		msg, _ := io.ReadAll(resp.Body)
-		fmt.Printf(string(msg))
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
@@ -126,8 +124,6 @@ func (h *hydraClient) GetConsentRequest(consentChallenge string) (*domain.Consen
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		msg, _ := io.ReadAll(resp.Body)
-		fmt.Printf(string(msg))
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
@@ -186,8 +182,6 @@ func (h *hydraClient) AcceptConsent(consentChallenge string, scopes []string, cl
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		msg, _ := io.ReadAll(resp.Body)
-		fmt.Printf(string(msg))
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 

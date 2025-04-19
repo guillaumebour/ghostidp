@@ -18,24 +18,12 @@ type Params struct {
 
 	HydraAdminURL string
 	UsersFile     string
-	Display       *DisplayParams
-}
-
-type DisplayParams struct {
-	Badge       string
-	Version     string
-	AccentColor string
 }
 
 func NewApplication(ctx context.Context, p *Params) (*Application, func(), error) {
 	appCtx, cancelAppCtx := context.WithCancel(ctx)
 
 	// Adapters
-	tmplProvider := adapters.NewEmbeddedTemplateProvider(&adapters.EmbeddedTemplateProviderParams{
-		Badge:       p.Display.Badge,
-		Version:     p.Display.Version,
-		AccentColor: p.Display.AccentColor,
-	})
 	hydraClient := adapters.NewHydraClient(&adapters.HydraClientParams{
 		Log:      p.Log,
 		AdminURL: p.HydraAdminURL,
@@ -52,7 +40,6 @@ func NewApplication(ctx context.Context, p *Params) (*Application, func(), error
 	identityMgr, err := service.NewIdentityManager(&service.IdentityManagerParams{
 		Log:                p.Log,
 		IdentityRepository: identitiesRepo,
-		TemplateProvider:   tmplProvider,
 		HydraClient:        hydraClient,
 	})
 	if err != nil {
