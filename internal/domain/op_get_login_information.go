@@ -77,7 +77,21 @@ func GetLoginInformation(ctx context.Context, loginChallenge string, h HydraClie
 		}, nil
 	}
 
-	// ToDo: Check login_hint
+	// If there is a login hint, we try to login the user directly
+	if loginReq.OIDCContext != nil && loginReq.OIDCContext.LoginHint != nil {
+		identity, err := ir.FindIdentityByUsername(ctx, *loginReq.OIDCContext.LoginHint)
+		if err != nil {
+			return nil, NewNotFoundError(fmt.Sprintf("failed to find identity for login hint %s", *loginReq.OIDCContext.LoginHint))
+		}
+
+		res, err := h.AcceptLogin(loginChallenge, identity.Username)
+		if err != nil {
+			return nil, fmt.Errorf("failed to accept login: %w", err)
+		}
+		return &LoginInformationResponse{
+			RedirectURL: res.RedirectTo,
+		}, nil
+	}
 
 	// If not, we return the list of identities
 	identities, err := ir.ListIdentities(ctx)
