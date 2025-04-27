@@ -7,7 +7,7 @@
     <title>GhostIdP - Login</title>
     <meta name="description" content="GhostIdP Login Page" />
 
-    <!-- daisyUI -->
+    <!-- daisyUI + TailwindCSS -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -83,15 +83,23 @@
                 <form class="list-row" method="POST" action="/login?login_challenge={{ $.Challenge}}">
                     <div>
                         <div class="avatar avatar-placeholder">
-                            <div class="bg-neutral text-neutral-content w-8 rounded-full">
-                                <span class="text-xs">{{ printf "%.1s" .Username }}</span>
+                            <div class="{{ if and .DisplayOpts .DisplayOpts.AvatarColor }}bg-[{{.DisplayOpts.AvatarColor}}]{{ else }}bg-neutral{{ end }} text-neutral-content w-8 rounded-full">
+                                {{ if and .DisplayOpts .DisplayOpts.AvatarText }}
+                                <span class="text-xs">{{ .DisplayOpts.AvatarText }}</span>
+                                {{ else }}
+                                <span class="text-xs">{{ printf "%.1s" .Username | ToUpper }}</span>
+                                {{ end }}
                             </div>
                         </div>
                     </div>
                     <div>
                         <label for="username">{{ .Username }} ({{ .GivenName }} {{ .FamilyName }})</label>
                         <input hidden type="text" id="username" name="username" value="{{ .Username }}" required>
-                        <div class="text-xs uppercase font-semibold opacity-60">{{ .Description }}</div>
+                        {{ if and .DisplayOpts .DisplayOpts.Description }}
+                        <div class="text-xs uppercase font-semibold opacity-60">
+                            {{ .DisplayOpts.Description }}
+                        </div>
+                        {{ end }}
                     </div>
                     <div class="tooltip" data-tip="Pinky promise">
                         <button type="submit" class="btn btn-square btn-ghost">

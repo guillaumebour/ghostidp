@@ -3,6 +3,7 @@ package handlers
 import (
 	_ "embed"
 	"html/template"
+	"strings"
 )
 
 //go:embed templates/login.tmpl
@@ -23,9 +24,14 @@ type EmbeddedTemplateProviderParams struct {
 }
 
 func NewEmbeddedTemplateProvider(p *EmbeddedTemplateProviderParams) TemplateProvider {
+	funcMap := template.FuncMap{
+		"ToUpper": strings.ToUpper,
+		"ToLower": strings.ToLower,
+	}
+
 	templates := make(map[TemplateName]*template.Template)
-	templates[LoginPage] = template.Must(template.New(string(LoginPage)).Parse(loginPageTemplate))
-	templates[ConsentPage] = template.Must(template.New(string(ConsentPage)).Parse(consentPageTemplate))
+	templates[LoginPage] = template.Must(template.New(string(LoginPage)).Funcs(funcMap).Parse(loginPageTemplate))
+	templates[ConsentPage] = template.Must(template.New(string(ConsentPage)).Funcs(funcMap).Parse(consentPageTemplate))
 
 	return &embeddedTemplateProvider{
 		templates: templates,

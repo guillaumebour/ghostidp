@@ -1,21 +1,20 @@
 # This is an example config
 users:
   - username: alice
-    description: |
-      A demo user called Alice
+    display:
+      description: An admin user
     email: alice@example.com
     given_name: Alice
     family_name: Smith
     custom_claims:
       roles:
         - admin
-        - user
       department: engineering
       employee_id: "12345"
 
   - username: bob
-    description: |
-      A demo user called Bob
+    display:
+      description: A regular user
     email: bob@example.com
     given_name: Bob
     family_name: Johnson

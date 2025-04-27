@@ -11,13 +11,19 @@ import (
 	"sync"
 )
 
+type DisplayOptions struct {
+	Description string `yaml:"description"`
+	AvatarText  string `yaml:"avatar_text"`
+	AvatarColor string `yaml:"avatar_color"`
+}
+
 type fileIdentity struct {
 	Username     string                 `yaml:"username"`
 	Password     string                 `yaml:"password"`
 	Email        string                 `yaml:"email"`
 	GivenName    string                 `yaml:"given_name"`
 	FamilyName   string                 `yaml:"family_name"`
-	Description  string                 `yaml:"description"`
+	Display      *DisplayOptions        `yaml:"display"`
 	CustomClaims map[string]interface{} `yaml:"custom_claims"`
 }
 
@@ -162,12 +168,21 @@ func (i *identityFileRepository) ListIdentities(_ context.Context) ([]*domain.Id
 }
 
 func fileIdentityToDomain(i *fileIdentity) *domain.Identity {
+	var do *domain.DisplayOptions
+	if i.Display != nil {
+		do = &domain.DisplayOptions{
+			Description: i.Display.Description,
+			AvatarText:  i.Display.AvatarText,
+			AvatarColor: i.Display.AvatarColor,
+		}
+	}
+
 	return &domain.Identity{
 		Username:     i.Username,
 		Email:        i.Email,
 		GivenName:    i.GivenName,
 		FamilyName:   i.FamilyName,
-		Description:  i.Description,
 		CustomClaims: i.CustomClaims,
+		DisplayOpts:  do,
 	}
 }

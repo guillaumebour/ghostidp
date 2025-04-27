@@ -2,12 +2,18 @@ package domain
 
 import "fmt"
 
+type DisplayOptions struct {
+	Description string
+	AvatarText  string
+	AvatarColor string
+}
+
 type Identity struct {
 	Username     string
 	Email        string
 	GivenName    string
 	FamilyName   string
-	Description  string
+	DisplayOpts  *DisplayOptions
 	CustomClaims map[string]any
 }
 
