@@ -1,0 +1,17 @@
+[book]
+authors = ["Guillaume Bour"]
+language = "en"
+multilingual = false
+src = "src"
+title = "ghostidp documentation"
+
+# https://github.com/lambdalisue/rs-mdbook-alerts
+[preprocessor.alerts]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output]
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
