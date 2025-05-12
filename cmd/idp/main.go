@@ -22,6 +22,8 @@ func main() {
 	hydraAdminURL := fs.String("hydra-admin-url", "http://localhost:4445/admin", "hydra admin api url")
 	usersFile := fs.String("users-file", "users.yaml", "hard-coded users file")
 	debug := fs.Bool("debug", false, "log debug information")
+	header := fs.String("header", "", "Header text")
+	headerLogoURL := fs.String("header-logo-url", "", "URL of the header logo")
 	badge := fs.String("badge", "", "Badge to display")
 	version := fs.String("version", "", "Version to display")
 	accentColor := fs.String("accent-color", "", "Color to use for accent color")
@@ -41,6 +43,8 @@ func main() {
 	appLogger.Debugf("port: %d", *port)
 	appLogger.Debugf("hydra admin URL: %s", *hydraAdminURL)
 	appLogger.Debugf("users file: %s", *usersFile)
+	appLogger.Debugf("header: %s", *header)
+	appLogger.Debugf("header logo url: %s", *headerLogoURL)
 	appLogger.Debugf("badge: %s", *badge)
 	appLogger.Debugf("version: %s", *version)
 	appLogger.Debugf("accent color: %s", *accentColor)
@@ -59,9 +63,11 @@ func main() {
 	}()
 
 	tmplProvider := handlers.NewEmbeddedTemplateProvider(&handlers.EmbeddedTemplateProviderParams{
-		Badge:       *badge,
-		Version:     *version,
-		AccentColor: *accentColor,
+		HeaderText:    *header,
+		HeaderLogoURL: *headerLogoURL,
+		Badge:         *badge,
+		Version:       *version,
+		AccentColor:   *accentColor,
 	})
 
 	router, err := handlers.CreateWebServer(app, tmplProvider)

@@ -40,7 +40,7 @@ services:
       - sqlite
   ghostidp:
     container_name: ghostidp
-    image: ghcr.io/guillaumebour/ghostidp:beta.1
+    image: ghcr.io/guillaumebour/ghostidp:v0.1.0-beta
     build:
       context: .
       dockerfile: Dockerfile
@@ -52,7 +52,9 @@ services:
       USERS_FILE: users.yaml
       BADGE: "DEV ENV"
       ACCENT_COLOR: "#008F8C"
-      VERSION: "beta.1"
+      VERSION: "v0.1.0-beta"
+      # HEADER: "Custom header"
+      # HEADER_LOGO_URL: "https://example.com/logo.svg"
     ports:
       - "8080:8080"
     depends_on:

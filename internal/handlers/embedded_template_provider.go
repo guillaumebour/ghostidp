@@ -18,9 +18,11 @@ type embeddedTemplateProvider struct {
 }
 
 type EmbeddedTemplateProviderParams struct {
-	Badge       string
-	Version     string
-	AccentColor string
+	HeaderText    string
+	HeaderLogoURL string
+	Badge         string
+	Version       string
+	AccentColor   string
 }
 
 func NewEmbeddedTemplateProvider(p *EmbeddedTemplateProviderParams) TemplateProvider {
@@ -36,9 +38,11 @@ func NewEmbeddedTemplateProvider(p *EmbeddedTemplateProviderParams) TemplateProv
 	return &embeddedTemplateProvider{
 		templates: templates,
 		templatesEnv: map[string]any{
-			"BadgeContent": p.Badge,
-			"Version":      p.Version,
-			"AccentColor":  p.AccentColor,
+			"HeaderText":    p.HeaderText,
+			"HeaderLogoURL": p.HeaderLogoURL,
+			"BadgeContent":  p.Badge,
+			"Version":       p.Version,
+			"AccentColor":   p.AccentColor,
 		},
 	}
 }

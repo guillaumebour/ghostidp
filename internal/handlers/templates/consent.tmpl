@@ -4,8 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <title>GhostIdP - Consent</title>
-    <meta name="description" content="GhostIdP Consent Page" />
+    {{ if .HeaderText }}
+        <title>{{ .HeaderText }} - Consent</title>
+        <meta name="description" content="{{ .HeaderText }} Consent Page" />
+    {{ else }}
+        <title>GhostIdP - Consent</title>
+        <meta name="description" content="GhostIdP Consent Page" />
+    {{ end }}
 
     <!-- daisyUI + TailwindCSS -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
@@ -42,10 +47,20 @@
 <header>
     <div class="navbar bg-base-100 shadow-sm">
         <div class="m-2">
-            <img alt="GhostIdP Logo" src="/assets/img/ghostidp_logo.png" width="50px"/>
+            {{ if .HeaderLogoURL }}
+                <img alt="Logo" src="{{ .HeaderLogoURL }}"/>
+            {{ else }}
+                <img alt="GhostIdP Logo" src="/assets/img/ghostidp_logo.png" width="50px"/>
+            {{ end }}
         </div>
         <div class="flex-1">
-            <a class="btn btn-ghost text-xl">Ghost IdP</a>
+            <a class="btn btn-ghost text-xl">
+                {{ if .HeaderText }}
+                    {{ .HeaderText }}
+                {{ else }}
+                    Ghost IdP
+                {{ end }}
+            </a>
             {{ if .BadgeContent }}
             <div class="badge badge-accent text-base-content">{{ .BadgeContent }}</div>
             {{ end }}
