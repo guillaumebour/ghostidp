@@ -4,17 +4,14 @@ A mock Identity Provider to support development.
 
 ## Concept
 
-ghostidp is born from a development need to have hard-coded users in an OpenID Compliant Identity Provider.
+_ghostidp_ was created to fulfill a development need: quickly spin up an OpenID Connect-compliant Identity Provider (IdP) with hard-coded demo users.
 
-The goal was to have an easy to setup/configure development Identity Provider which could be preloaded with
-demo users having different claims. This allows, for instance, to simulate different roles or different identity providers.
+The goal is to provide an easy-to-setup and configure IdP tailored for development and testing. By preloading users with customizable claims, developers can simulate different roles, permissions, or even multiple identity providers.
 
-In practice, ghostidp is simply a custom UI implementation of the login and consent screens of [Ory Hydra](https://github.com/ory/hydra).
+Under the hood, _ghostidp_ is a custom UI for the login and consent screens of [Ory Hydra](https://github.com/ory/hydra).
 
-Users have no password and can simply be selected out of a list of all available users.
-This, in addition to the absence of session, makes for an easy way to switch from one user to another.
-
-At the moment, ghostidp focuses on scenarios where the obtained JWT token is only used for authenticating the user in the application.
+There are no passwords in _ghostidp_. Instead, users are selected from a list, enabling fast switching between identities. 
+Combined with a stateless (sessionless) design, this makes it simple to test scenarios involving different users without any friction.
 
 ![ghostidp screenshots](screenshots.png)
 
@@ -29,8 +26,8 @@ Available users are provided to ghostidp via a config file such as:
 ```yaml
 users:
   - username: alice
-    description: |
-      A demo user called Alice
+    display:
+      description: A demo user called Alice
     email: alice@example.com
     given_name: Alice
     family_name: Smith
