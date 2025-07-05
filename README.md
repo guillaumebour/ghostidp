@@ -1,6 +1,8 @@
+![banner](docs/src/images/banner.png)
+
 # ghostidp
 
-A mock Identity Provider to support development.
+A mock Identity Provider built for development.
 
 ## Concept
 
