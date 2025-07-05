@@ -39,8 +39,8 @@ Create a config for _ghostidp_, containing the hard-coded users:
 # config/users.yaml
 users:
   - username: alice
-    description: |
-      A demo user called Alice
+    display: 
+      description: A demo user called Alice
     email: alice@example.com
     given_name: Alice
     family_name: Smith
@@ -51,8 +51,8 @@ users:
       department: engineering
       employee_id: "12345"
   - username: bob
-    description: |
-      A demo user called Bob
+    display:
+      description: A demo user called Bob
     email: bob@example.com
     given_name: Bob
     family_name: Johnson

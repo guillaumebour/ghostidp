@@ -20,7 +20,8 @@ ghostidp:
   usersConfig: |
     users:
       - username: alice
-        description: A demo user.
+        display: 
+          description: A demo user.
         email: alice@example.com
         given_name: Alice
         family_name: Smith
@@ -31,7 +32,8 @@ ghostidp:
             - admin
             - user
       - username: bob
-        description: A demo user.
+        display:
+          description: A demo user.
         email: bob@example.com
         given_name: Bob
         family_name: Marvel

@@ -6,8 +6,8 @@ Available users can be configured in the `users.yaml` config file provided to `g
 # This is an example config
 users:
   - username: jeandupont
-    description: |
-      A demo user called Alice
+    display:
+      description: A demo user called Alice
     email: jean.dupont@example.com
     given_name: Jean
     family_name: Dupont
@@ -21,7 +21,7 @@ users:
 
 Where the fiels are used as follows:
 - `username`: used in claims
-- `description`: used in the UI
+- `display.description`: only used in the UI
 - `email`: used in claims
 - `given_name`: used in claims
 - `family_name`: used in claims

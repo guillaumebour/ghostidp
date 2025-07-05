@@ -4,6 +4,13 @@ ghostidp's UI can be customized to better fit your needs.
 
 This page describes the available environment variables that can be customized.
 
+## System
+
+### Log level
+
+Set `DEBUG` to `true` if you want ghostidp's logs to be more granular.
+
+
 ## Login and consent pages
 
 ### Adding a badge
@@ -24,37 +31,46 @@ You can set the accent color by setting the `ACCENT_COLOR` environment variable 
 You can add version information in the footer of the login and consent pages by setting the `VERSION` environment variable to e.g. `v1.0.0-beta`.
 While the intended use is to display version information, how you use it is up to you. 
 
-### Header Logo
-
-TODO (not possible yet)
-
 ### Header Text
 
-TODO (not possible yet)
+You can customize the text used in the header of the login and consent pages by setting the `HEADER_TEXT` environment variable.
 
+### Header Logo
 
-### Log level
-
-Set `DEBUG` to `true` if you want ghostidp's logs to be more granular.
+You can customize the logo used in the header of the login and consent pages by setting the `HEADER_LOGO_URL` environment variable.
 
 
 ## Users
 
 ### Description
 
-Users' description text can be set when [configuring the users](03_managing_users_configuration.md), by setting the `description` field:
+Users' description text can be set when [configuring the users](03_managing_users_configuration.md), by setting the `display.description` field:
 
 ```yaml
 users:
   - username: alice
-    description: |
-      A demo user called Alice
+    display:
+      description: A demo user called Alice
 ```
 
 ### Avatar text
 
-TODO (not possible yet)
+The text in the Avatar can be set when [configuring the users](03_managing_users_configuration.md), by setting the `display.avatar_text` field:
+
+```yaml
+users:
+  - username: alice
+    display:
+      avatar_text: AS
+```
 
 ### Avatar color
 
-TODO (not possible yet)
+The color of the Avatar can be set when [configuring the users](03_managing_users_configuration.md), by setting the `display.avatar_color` field:
+
+```yaml
+users:
+  - username: alice
+    display:
+      avatar_color: "#03a1fc"
+```
